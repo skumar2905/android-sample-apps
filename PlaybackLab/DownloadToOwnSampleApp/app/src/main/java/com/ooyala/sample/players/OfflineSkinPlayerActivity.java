@@ -4,11 +4,11 @@ package com.ooyala.sample.players;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.ooyala.android.OoyalaNotification;
 import com.ooyala.android.OoyalaPlayer;
 import com.ooyala.android.PlayerDomain;
+import com.ooyala.android.analytics.IqConfiguration;
 import com.ooyala.android.configuration.Options;
 import com.ooyala.android.item.OfflineVideo;
 import com.ooyala.android.skin.OoyalaSkinLayout;
@@ -16,7 +16,6 @@ import com.ooyala.android.skin.OoyalaSkinLayoutController;
 import com.ooyala.android.skin.configuration.SkinOptions;
 import com.ooyala.android.util.SDCardLogcatOoyalaEventsLogger;
 import com.ooyala.sample.R;
-
 import org.json.JSONObject;
 
 import java.io.File;
@@ -53,7 +52,13 @@ public class OfflineSkinPlayerActivity extends Activity implements Observer, Def
 
     // Create the OoyalaPlayer, with some built-in UI disabled
     PlayerDomain domain = new PlayerDomain(DOMAIN);
-    Options options = new Options.Builder().setShowPromoImage(false).setShowNativeLearnMoreButton(false).setUseExoPlayer(true).build();
+    IqConfiguration iqConfiguration = new IqConfiguration.Builder().setPlayerID("Offline Android Player").build();
+    Options options = new Options.Builder()
+            .setIqConfiguration(iqConfiguration)
+            .setShowPromoImage(false)
+            .setShowNativeLearnMoreButton(false)
+            .setUseExoPlayer(true)
+            .build();
     player = new OoyalaPlayer(PCODE, domain, options);
 
     //Create the SkinOptions, and setup React
@@ -69,7 +74,10 @@ public class OfflineSkinPlayerActivity extends Activity implements Observer, Def
       //Uncomment for autoplay
       //player.play();
     }
-    else {
+    else if (player.setEmbedCode(EMBED)) {
+      //Uncomment for autoplay
+      //player.play();
+    } else {
       Log.e(TAG, "Asset Failure");
     }
   }
